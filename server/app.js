@@ -1,24 +1,44 @@
+import express from 'express';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import indexRouter from './routes/index.js';
+import usersRouter from './routes/users.js';
+import { ApolloServer, gql } from 'apollo-server-express';
+import { makeExecutableSchema } from 'graphql-tools';
 
-const express = require('express'),
-    http = require('http'),
-    path = require('path');
+import typeDefs from './typeDefs.js';
+import resolvers from './resolver.js';
 
-const bodyParser = require('body-parser'),
-    static = require('serve-static');
+const app = express();
+const __dirname = path.resolve();
 
-let app = express();
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.set('port', precess.env.PORT || 3001);
+app.use('/', indexRouter);
 
-//body-parser를 사용해 application/x-www-form-urlencoded 파싱
-app.use(bodyParser.urlencoded({extended : false}))
-//body-parser를 사용해 application/json 파싱
-app.use(bodyParser.json())
-app.use(static(path.join(__dirname, 'public')))
+const schema = makeExecutableSchema({typeDefs, resolvers})
 
-const server = http.createServer(app);
+// apollo server express의 모듈을 각 API에 맵핑.
 
-server.listen(PORT, ()=>{
-    console.log(`connect to ${PORT} port!`)
+const server = new ApolloServer({
+    typeDefs,
+    resolvers
+})
+
+server.applyMiddleware({
+    app,
+    path:'/graphql'
 });
 
+app.listen({port : 3002}, ()=>{
+    console.log('server is open');
+})
+
+
+
+export default app;
