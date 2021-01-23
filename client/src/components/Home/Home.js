@@ -5,8 +5,13 @@ function Home(){
   return (
     <Fragment>
       <button>
-        <Link to="/login">
+        <Link to="/signin">
           Sign In
+        </Link>
+      </button>
+      <button>
+        <Link to="/signup">
+          Sign Up
         </Link>
       </button>
 
