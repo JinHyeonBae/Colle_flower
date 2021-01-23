@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import Channel from "./component/Channel"
+import Channel from "./component/Channel/Channel.js"
 
 function App() {
   return (

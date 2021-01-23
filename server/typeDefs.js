@@ -10,10 +10,10 @@ type Query{
 }
 
 type ChannelInfo{
-    host : String!,
-    channelTitle : String,
-    serverCode : String,
-    teamMember : [String]!
+    Host : String,
+    ChannelTitle : String,
+    ServerCode : String,
+    TeamMember : [String]
 }
 
 
@@ -36,8 +36,13 @@ type CommentInfo{
 
 }
 
+type Mutation{
+    CreateChannel(Host : String!, ChannelTitle : String, TeamMember : String) : ChannelInfo 
+}
+
 schema{
     query : Query,
+    mutation : Mutation
 }`;
 
 export default typeDefs;
