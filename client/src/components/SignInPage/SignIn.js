@@ -5,7 +5,7 @@ const mapDispatchToProps = (dispatch) => ({
   comment : () => dispatch(login()),
 }) */
 
-function Login(){
+function SignIn(){
   /* const dispatch = useDispatch(); */
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
@@ -39,7 +39,7 @@ function Login(){
           />
           <input 
             type="password"
-            placeholder="password" 
+            placeholder="Password" 
             value={userPassword} 
             onChange={passwordOnChangeHandler}
           />
@@ -50,4 +50,4 @@ function Login(){
   );
 }
 
-export default Login;
+export default SignIn;
