@@ -1,7 +1,8 @@
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
 
+//채널에 대한 정보를 다 들고 옴.
 
-//채널에 대한 정보를 다 들고 옴. 배열로 올 것이고 이는 옆 쪽의 채널 목록에 들어감
 export const GET_CHANNEL_LIST = gql`    
     query{
         Channel{
@@ -15,10 +16,9 @@ export const GET_CHANNEL_LIST = gql`
 
 
 //채널에 따른 말풍선 가져오기
-
 export const GET_POST = gql`
     query{
-        PostInfo(host, channelTitle){
+        PostInfo(Host : $Host, ChannelTitle : $ChannelTitle){
             Writer,
             CreatedAt,
             NickName,
@@ -27,19 +27,19 @@ export const GET_POST = gql`
             Hated,
             Notifying,
             PostID,
-            Comment
+            PostComment
         }
     }
 `;
 
 export const GET_COMMENT = gql`
     query{
-        Comment(PostID){
+        Comment(PostID : PostID){
             NickName
             CommentContent
             PostID
         }
     }
-
 `;
+
 
