@@ -10,7 +10,6 @@ import cors from 'cors';
 
 import typeDefs from './typeDefs.js';
 import resolvers from './resolver.js';
-import Channel from './routes/Channel.js'
 const app = express();
 const __dirname = path.resolve();
 
@@ -31,6 +30,7 @@ const schema = makeExecutableSchema({typeDefs, resolvers})
 console.log(resolvers.Query.Channel());
 
 //graphql 스키마를 기반으로 express 애플리케이션 구성
+
 app.use('/graphql', graphqlHTTP({
     schema: schema,
     rootValue: resolvers,

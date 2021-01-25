@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM, { render } from 'react-dom';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/client';
 import { GET_CHANNEL_LIST, GET_POST } from './Query.js';
 import { CREATE_CHANNEL } from './Mutation.js';
-import { Modal } from '@material-ui/core';
-
 import CreateChannel from './CreateChannel';
+import Message from './Message/Message'
 import {QueryData} from './SendData.js';
 
 // Channel.js에서는 모든 Channel에 적용되는 basic 설정을 추가한다.
@@ -32,6 +31,10 @@ function Channel() {
 
     // console.log(mutationData);
 
+    const test = ()=>{
+        
+    }
+
     useEffect(()=>{
         QueryData();
     })
@@ -44,7 +47,7 @@ function Channel() {
                 <CreateChannel />
             </div>
             <div className="Channel_footer">
-
+                <Message/>
             </div>
         </div>
     );
