@@ -7,11 +7,15 @@ import { ApolloServer, gql } from 'apollo-server-express';
 import { makeExecutableSchema } from 'graphql-tools';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import http from 'http';
 
-import typeDefs from './typeDefs.js';
-import resolvers from './resolver.js';
+import typeDefs from './typeDefs/typeDefs.js';
+import resolvers from './resolvers/ChattingResolver.js';
+
+
 const app = express();
 const __dirname = path.resolve();
+const PORT = 3002;
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -19,17 +23,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
-
-// app.use(/\/((?!graphql).)*/, bodyParser.urlencoded({ extended: true }));
-// app.use(/\/((?!graphql).)*/, bodyParser.json());
-// app.use(bodyParser.json({ type: 'application/graphql' }));
+app.set('port', process.env.PORT || 3002);
 
 const schema = makeExecutableSchema({typeDefs, resolvers})
 
-
-console.log(resolvers.Query.Channel());
-
-//graphql 스키마를 기반으로 express 애플리케이션 구성
 
 app.use('/graphql', graphqlHTTP({
     schema: schema,
@@ -40,18 +37,31 @@ app.use('/graphql', graphqlHTTP({
 // apollo server express의 모듈을 각 API에 맵핑.
 const server = new ApolloServer({
     schema : schema,
-    playground : true
+    playground : true,
+    context : async({req, connection})=>{
+        if(connection)
+            return connection.context
+    },
+    subscriptions :{
+        path: '/subscriptions',
+        onConnect: (connectionParams, webSocket) => {
+            console.log("Subscription ok!");
+        }
+    }
 })
 
-//apollo server와 http 프레임워크를 연결해줌
 server.applyMiddleware({
     app,
     path:'/graphql'
 });
 
+//server 객체를 하나 더 만들고 등록해주니 되네
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
 
-app.listen({port : 3002}, ()=>{
-    console.log('server is open');
+httpServer.listen(PORT, ()=>{
+    console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`)
+    console.log(`🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`)
 })
 
 export default app;

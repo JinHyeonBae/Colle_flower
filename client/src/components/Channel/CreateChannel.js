@@ -1,4 +1,6 @@
 import { useState, useRef } from 'react';
+import { CREATE_CHANNEL } from './Mutation'
+import { useQuery, useMutation, useLazyQuery } from '@apollo/client';
 
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -8,11 +10,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
-import { MutationData } from './SendData.js';
 
 
-
-function CreateChannel() {
+function CreateChannel({ n }) {
 
     const [open, isOpen] = useState(false);
     const [nickname, setNickname] = useState('');
@@ -21,29 +21,19 @@ function CreateChannel() {
     const nickNameRef = useRef();
     const titleRef = useRef();
 
+    const [addChannel] = useMutation(CREATE_CHANNEL);
+
     const handleOpen = () => {
         isOpen(true);
     }
 
     const handleClose = () => {
-        console.log(nickname);
-        console.log(title);
-
         isOpen(false);
-        if (nickname == "" || title == "")
-            alert("입력하지 않은 정보가 있습니다!");
-        else {
-            const data = {
-                "Host": nickname,
-                "ChannelTitle": title
-            }
-            MutationData(data);
-        }
     }
 
-    const handleChange = (e)=>{
-        console.log(e.target);
-        if(e.target.id === "Host")
+    const handleChange = (e) => {
+        console.log("dd")
+        if (e.target.id === "Host")
             setNickname(e.target.value)
         else
             setTitle(e.target.value);
@@ -71,7 +61,7 @@ function CreateChannel() {
                         margin="dense"
                         id="title"
                         label="ChannelTitle"
-                        type="password"
+                        type="input"
                         fullWidth
                     />
                 </DialogContent>
@@ -79,7 +69,19 @@ function CreateChannel() {
                     <Button onClick={handleClose} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={handleClose} color="primary">
+                    <Button onClick={(e) => {
+                        console.log(title)
+                        if (nickNameRef.current.value != '' && titleRef.current.value != '') {
+                            addChannel({
+                                variables: {
+                                    "Host": nickname,
+                                    "ChannelTitle": title,
+                                    "TeamMember": nickname,
+                                    "StuNumber": n.StuNumber
+                                }
+                            })
+                        }
+                    }} color="primary">
                         confirm
                     </Button>
                 </DialogActions>

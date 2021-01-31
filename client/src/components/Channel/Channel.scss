@@ -1,0 +1,13 @@
+
+
+.Channel_frame{
+    display: flex; 
+    flex-flow: row wrap;
+    /* 기본값 */ /* flex-direction: row | row-reverse | column | column-reverse */ 
+    justify-content: flex-start;
+
+    .Channel_footer{
+        border : 1px solid black;
+        
+    }
+}

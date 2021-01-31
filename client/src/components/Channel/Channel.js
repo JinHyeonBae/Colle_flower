@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM, { render } from 'react-dom';
-import { useQuery, useMutation } from '@apollo/client';
 import { GET_CHANNEL_LIST, GET_POST } from './Query.js';
 import { CREATE_CHANNEL } from './Mutation.js';
 import CreateChannel from './CreateChannel';
 import Message from './Message/Message'
-import {QueryData} from './SendData.js';
+import { useQuery, useMutation,useLazyQuery } from '@apollo/client';
+import './Channel.scss'
 
 // Channel.js에서는 모든 Channel에 적용되는 basic 설정을 추가한다.
 // 채널의 제목, 설명, 채팅을 칠 수 있는 공간 등이 있다.
@@ -13,44 +13,42 @@ import {QueryData} from './SendData.js';
 // 게시글은 바로 아래의 컴포넌트가 될 것이다. 
 
 function Channel() {
-    console.log("hihi");
+    
+    const StuNumber={"StuNumber": "201811111"};
+    let ChannelList = [];
 
-    //const { loading, queryData, error } = useQuery(GET_CHANNEL_LIST);
-    // const [addChannel, { mutationData }] = useMutation(CREATE_CHANNEL);
-    // //이 쿼리 자체가 object object인데
-    // const [title, setTitle] = useState('');
-
+    const { loading, data, error } = useQuery(GET_CHANNEL_LIST,{
+        variables : StuNumber
+    });
+    
     const [Host, setHost] = useState('');
-    const [ChannelTitle, setChannelTitle] = useState('');
+    const [Title, setChannelTitle] = useState([]);
     const [TeamMember, setTeamMember] = useState([]);
 
+    console.log(data)
+    if(data)
+        ChannelList = data.Channel.map((element, index)=>{
+            return <div key={index}>{element.ChannelTitle}</div>
+        })
 
-    // if (error) console.log("err ", error);
-    // if (loading || !queryData) //return <div>loading...</div>
-    // console.log(queryData);
-
-    // console.log(mutationData);
-
-    const test = ()=>{
-        
-    }
-
-    useEffect(()=>{
-        QueryData();
-    })
-    
+ 
     return (
         <div className="Channel_frame">
             <div className="Channel_header">
             </div>
             <div className="Channel_container">
-                <CreateChannel />
+                <CreateChannel n={StuNumber} />
+                {ChannelList}
             </div>
             <div className="Channel_footer">
                 <Message/>
             </div>
         </div>
     );
+
+}
+
+function getPromiseData(){
 
 }
 

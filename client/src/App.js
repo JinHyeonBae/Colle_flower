@@ -1,8 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
-import Channel from "./component/Channel/Channel.js"
+import Channel from "./components/Channel/Channel.js"
 
-function App() {
+function App({client}) {
   return (
     <div className="App_Frame">
       <div>

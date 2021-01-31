@@ -3,19 +3,44 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { ApolloClient, InMemoryCache } from '@apollo/client'
-import { ApolloProvider } from '@apollo/react-hooks';
-import {createHttpLink} from 'apollo-link-http';
+import { ApolloClient, InMemoryCache,ApolloProvider } from '@apollo/client'
+import { createHttpLink } from 'apollo-link-http';
+import { split, HttpLink } from '@apollo/client';
+import { getMainDefinition } from '@apollo/client/utilities';
+import { WebSocketLink } from 'apollo-link-ws';
+
 
 
 //연동할 graphql 서버의 uri를 설정해야해야 함.
 
-const httpLinks = createHttpLink({
-  uri :'/graphql'
+const httpLink = createHttpLink({
+  uri :"http://localhost:3002/graphql"
 });
 
+const wsLink = new WebSocketLink({
+  uri : "ws://localhost:3002/subscriptions",
+  options :{
+    reconnect : true
+  }
+})
+
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  httpLink,
+);
+
+
+
 const client = new ApolloClient({
-  link : httpLinks,
+  splitLink,
+  uri : "http://localhost:3002/graphql",
   cache: new InMemoryCache()
 });
 //for fetching data
