@@ -3,7 +3,8 @@
 .Message_box{
 
     display : flex;
-
+    flex-direction: column;
+    width : 100%;
     .Messages{
         background-color: antiquewhite;
   

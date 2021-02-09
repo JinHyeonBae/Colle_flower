@@ -6,6 +6,11 @@
     /* 기본값 */ /* flex-direction: row | row-reverse | column | column-reverse */ 
     justify-content: flex-start;
 
+    .Channel_Content{
+        display: flex;
+        flex-flow: column;
+    }
+
     .Channel_footer{
         border : 1px solid black;
         

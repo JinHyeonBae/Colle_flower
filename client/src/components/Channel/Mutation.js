@@ -1,4 +1,4 @@
-import { useQuery,gql } from '@apollo/client';
+import { useQuery, gql } from '@apollo/client';
 // import gql from 'graphql-tag';
 
 export const CREATE_CHANNEL = gql`
@@ -22,8 +22,12 @@ export const CREATE_MESSAGE = gql`
     }
 `;
 
-
-
-
-
-
+export const SUBSCRIPTION_MESSAGE = gql`
+    subscription{ 
+        newChat{
+            MsgFrom
+            MessageContent
+            CreatedAt
+        }
+    }
+`;

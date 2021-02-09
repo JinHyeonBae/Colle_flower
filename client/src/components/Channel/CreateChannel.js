@@ -77,7 +77,7 @@ function CreateChannel({ n }) {
                                     "Host": nickname,
                                     "ChannelTitle": title,
                                     "TeamMember": nickname,
-                                    "StuNumber": n.StuNumber
+                                    "StuNumber":"201811111"
                                 }
                             })
                         }

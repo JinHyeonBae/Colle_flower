@@ -8,11 +8,11 @@ const typeDefs = gql`
 # 채널에서도 MessageID를 넣고 쓰면 편하지 않을까? 불러올 때 와장창 다 불러올 수 있음
 
 type ChannelInfo{
-    Host : String,
-    ChannelTitle : String,
-    ServerCode : String,
-    TeamMember : String,
-    StuNumber : String
+    Host:String,
+    ChannelTitle:String,
+    ServerCode:String,
+    TeamMember: String,
+    StuNumber: String
 }
 
 
@@ -24,7 +24,7 @@ type Message{
     Liked:Int,
     Hated: Int,
     Notifying: Int,
-    MessageId: String!,
+    MessageId: String,
     ServerCode: String,
 }
 
@@ -47,7 +47,6 @@ type Query{
 type Subscription{
     newChat: Message
 }
-
 
 schema{
     query:Query,
