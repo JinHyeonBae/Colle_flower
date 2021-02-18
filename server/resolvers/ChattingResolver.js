@@ -14,12 +14,14 @@ const MSG_ADD = "MSGADD";
 
 const ChattingResolver = {
     Query: {
-        Channel: async (_, { StuNumber }, { pubsub }) => {
+        Channel: async (_, { StuNumber }) => {
             const [rows, field] = await connection.promise().query(`SELECT * from channel where StuNumber="${StuNumber}"`);
             return rows;
         },
         getMessage: async (parent, { ServerCode }) => {
-            const [rows, field] = await connection.promise().query(`SELECT * from messages where ServerCode="${ServerCode}"`);
+            const [rows, field] = await connection.promise().query(`SELECT * from messages where ServerCode="${ServerCode}" ORDER BY CreatedAt`);
+            
+            console.log("row :",rows);
             return rows;
         }
     },
@@ -30,19 +32,21 @@ const ChattingResolver = {
             console.log("id :", id);
 
             if (id)
-                ServerCode = `/pknu${StuNumber}/${id}`;
+                ServerCode = `pknu${StuNumber}/${id}`;
 
-            connection.promise().query(`insert into channel(Host,ChannelTitle,TeamMember,ServerCode,StuNumber) Values ("${Host}","${ChannelTitle}","${TeamMember}", "${ServerCode}", "${StuNumber}")`);
+            await connection.promise().query(`insert into channel(Host,ChannelTitle,TeamMember,ServerCode,StuNumber) Values ("${Host}","${ChannelTitle}","${TeamMember}", "${ServerCode}", "${StuNumber}")`);
             return 1;
         },
         SendMessage: async (_, args, context) => {
             const msgId = uuid();
+            console.log(typeof args.CreatedAt)
+            const integerDate = parseInt(args.CreatedAt);
+            
             await connection.promise().query(`insert into messages(MsgFrom,MsgTo,CreatedAt,MessageContent,MessageId,ServerCode) Values ("${args.MsgFrom}","${args.MsgTo}","${args.CreatedAt}","${args.MessageContent}","${msgId}","${args.ServerCode}")`);
 
             //이벤트와 데이터를 subscription Resolver로 전송하는 매커니즘
             context.pubsub.publish(MSG_ADD, { newChat: args })
-            
-            console.log("args :", args);
+
             return args
         }
     },

@@ -12,6 +12,7 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 import { onError } from "@apollo/client/link/error";
 
 
+
 //연동할 graphql 서버의 uri를 설정해야해야 함.
 
 const httpLink = createHttpLink({
@@ -44,7 +45,13 @@ splitLink.setOnError((err) =>{
 //uri를 http로 쓰니까 ws가 다 무시된건가? 온다. 옵션의 명을 잘 봐야겠다
 const client = new ApolloClient({
   link : splitLink,
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies:{
+      Channel : {
+        keyFields : ["ServerCode"]
+      }
+    }
+  }),
 });
 //for fetching data
 

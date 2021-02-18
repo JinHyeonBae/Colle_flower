@@ -3,11 +3,13 @@ import ReactDOM, { render } from 'react-dom';
 import { GET_CHANNEL_LIST, GET_POST } from './Query.js';
 import { CREATE_CHANNEL } from './Mutation.js';
 import CreateChannel from './CreateChannel';
-import Message from './Message/Message'
 import { useQuery, useMutation, useLazyQuery } from '@apollo/client';
 import { Link, useParams } from 'react-router-dom';
-import './Channel.scss'
+import { useApolloClient } from '@apollo/client';
+
 import {StudentNumber} from './Message/TemporaryUser'
+import Message from './Message/Message'
+import './Channel.scss'
 
 // Channel.js에서는 모든 Channel에 적용되는 basic 설정을 추가한다.
 // 채널의 제목, 설명, 채팅을 칠 수 있는 공간 등이 있다.
@@ -17,24 +19,33 @@ import {StudentNumber} from './Message/TemporaryUser'
 function Channel() {
     console.log(StudentNumber)
 
+    const client = useApolloClient();
     const param = useParams();
     const { loading, data, error } = useQuery(GET_CHANNEL_LIST, {
         variables: StudentNumber
     });
 
+    // console.log("client :", client);
+
+    // const result = client.readQuery({
+    //     query : GET_CHANNEL_LIST,
+    // })
+    // console.log("result :",result);
+
 
     if (loading) return <div>loading...</div>
     if (error) return <div>{error}</div>
     if (data) console.log(data);
+
     return (
         <div className="Channel_frame">
-            <div className="Channel_Content">
+            <div className="Channel_List">
                 <CreateChannel />
                 {data.Channel.map(({ ChannelTitle, ServerCode }) =>
                     <Link to={`/Chat/colleflower/${ServerCode}`}>{ChannelTitle}</Link>
-                )}
+                )} 
             </div>
-            <div className="Channel_footer">
+            <div className="Message_container">
                 <Message />
             </div>
         </div>

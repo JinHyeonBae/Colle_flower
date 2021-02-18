@@ -2,17 +2,34 @@
 
 .Channel_frame{
     display: flex; 
-    flex-flow: row wrap;
+    //컴퓨터의 높이, 너비를 뷰포트라고 함
+    height: 100vh;
+    width: 100vw;
     /* 기본값 */ /* flex-direction: row | row-reverse | column | column-reverse */ 
     justify-content: flex-start;
 
-    .Channel_Content{
+    position: fixed;
+    //overflow: hidden;
+    
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    .Channel_List{
+        width : 25%;
+        height: 100%;
         display: flex;
         flex-flow: column;
     }
 
-    .Channel_footer{
+    .Message_container{
+        width:75%;
+        height: 100%;
+        align-self:flex-end;  
         border : 1px solid black;
-        
     }
+}
+
+body{
+    margin : 0;
 }

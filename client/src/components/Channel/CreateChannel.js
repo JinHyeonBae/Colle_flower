@@ -32,7 +32,6 @@ function CreateChannel({ n }) {
     }
 
     const handleChange = (e) => {
-        console.log("dd")
         if (e.target.id === "Host")
             setNickname(e.target.value)
         else
