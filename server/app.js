@@ -3,7 +3,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import {graphqlHTTP} from 'express-graphql';
-import { ApolloServer, gql } from 'apollo-server-express';
+import { ApolloServer, AuthenticationError, gql } from 'apollo-server-express';
 import { makeExecutableSchema } from 'graphql-tools';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -13,8 +13,8 @@ import { PubSub } from 'graphql-subscriptions';
 
 import typeDefs from './typeDefs/typeDefs.js';
 import resolvers from './resolvers/ChattingResolver.js';
-
-import { error } from 'console';
+import auth from './api/auth.js'
+import jwt from 'jsonwebtoken'
 
 const pubsub = new PubSub();
 
@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use(cors());
 app.set('port', process.env.PORT || 4000);
 
-const schema = makeExecutableSchema({typeDefs, resolvers})
+//const schema = makeExecutableSchema({typeDefs, resolvers})
 
 app.use('/graphql', bodyParser.json());
 
@@ -47,7 +47,11 @@ const formatError = (err) => {
 const server = new ApolloServer({
     typeDefs : typeDefs,
     resolvers : resolvers,
-    context : ({req,res, connection})=> ({req,res,pubsub,connection}),
+    context : (context)=>{
+        const ctx = auth(context);
+        console.log(ctx);
+        return {ctx, pubsub}
+    },
     playground : true,
     tracing: true,
     subscriptions : {

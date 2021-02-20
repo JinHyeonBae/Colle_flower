@@ -2,9 +2,9 @@ import { useQuery, gql } from '@apollo/client';
 // import gql from 'graphql-tag';
 
 export const CREATE_CHANNEL = gql`
-    mutation CreateChannel($Host:String!, $ChannelTitle:String, $TeamMember:String, $StuNumber:String){
-        CreateChannel(Host: $Host, ChannelTitle:$ChannelTitle , TeamMember: $TeamMember, StuNumber:$StuNumber){
-            Host,
+    mutation CreateChannel($HostMember:String!, $ChannelTitle:String, $TeamMember:String, $StuNumber:String){
+        CreateChannel(HostMember: $HostMember, ChannelTitle:$ChannelTitle , TeamMember: $TeamMember, StuNumber:$StuNumber){
+            HostMember,
             ChannelTitle,
             TeamMember
         }      

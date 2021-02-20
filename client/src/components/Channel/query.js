@@ -6,14 +6,13 @@ import gql from 'graphql-tag';
 export const GET_CHANNEL_LIST = gql`    
     query getChannel($StuNumber:String){
         Channel(StuNumber:$StuNumber){
-            Host
+            HostMember
             ChannelTitle
             ServerCode 
             TeamMember 
         }
     }
 `;
-
 
 //채널에 따른 말풍선 가져오기
 export const GET_MESSAGE = gql`
@@ -26,6 +25,14 @@ export const GET_MESSAGE = gql`
             Liked
             Hated
             Notifying
+        }
+    }
+`;
+
+export const GET_CURRENT_CHANNEL = gql`
+    query getCurrentChannel($ServerCode : String){
+        getCurrentChannel(ServerCode : $ServerCode){
+            TeamMember
         }
     }
 `;

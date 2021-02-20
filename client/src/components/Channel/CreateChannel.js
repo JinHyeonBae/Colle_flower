@@ -10,9 +10,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
-
-
-function CreateChannel({ n }) {
+function CreateChannel() {
 
     const [open, isOpen] = useState(false);
     const [nickname, setNickname] = useState('');
@@ -73,7 +71,7 @@ function CreateChannel({ n }) {
                         if (nickNameRef.current.value != '' && titleRef.current.value != '') {
                             addChannel({
                                 variables: {
-                                    "Host": nickname,
+                                    "HostMember": nickname,
                                     "ChannelTitle": title,
                                     "TeamMember": nickname,
                                     "StuNumber":"201811111"

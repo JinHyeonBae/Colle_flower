@@ -20,6 +20,13 @@
         height: 100%;
         display: flex;
         flex-flow: column;
+
+        .Chatting_EachOther{
+            align-content: flex-end;
+            width: 100%;
+            height: 20%;
+            border: 1px solid black;
+        }
     }
 
     .Message_container{

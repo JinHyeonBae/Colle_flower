@@ -1,11 +1,9 @@
 import { useState, useRef, useEffect,Fragment } from 'react';
-import { v4 as uuid } from 'uuid';
 import { useParams } from 'react-router-dom';
-import { useQuery, useMutation, useLazyQuery, useSubscription, gql } from '@apollo/client';
-import { GET_MESSAGE } from '../Query';
+import { useQuery, useMutation, useLazyQuery, useSubscription, gql,useApolloClient } from '@apollo/client';
+import { GET_MESSAGE } from '../query';
 import { CREATE_MESSAGE, SUBSCRIPTION_MESSAGE } from '../Mutation'
-
-import {AppBar,Toolbar} from '@material-ui/core';
+import { GET_CHANNEL_LIST  } from '../query.js';
 
 import './Message.scss';
 import { User } from './TemporaryUser'
@@ -14,19 +12,23 @@ function Message() {
 
     const msgRef = useRef();
     const [content, setContent] = useState('');
+    const client = useApolloClient();
 
     const time = new Date();
     const nowDate = `${time.getFullYear()}-${time.getMonth() < 10 ? '0' + time.getMonth() : time.getMonth()}-${time.getDate() < 10 ? '0' + time.getDate() : time.getDate()}`;
     const nowTime = `${(time.getHours() > 9 ? time.getHours() : '0' + time.getHours())}:${time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()}:${time.getSeconds()}`;
     const date = nowDate + ' ' + nowTime;
 
-    const { ServerCode } = useParams(); //servercode
+    const param = useParams(); //servercode
 
     const { data, loading, subscribeToMore } = useQuery(GET_MESSAGE, {
-        variables: { "ServerCode": ServerCode },
+        variables: param,
     });
-    const result = useSubscription(SUBSCRIPTION_MESSAGE);
-
+    const result = client.readQuery({
+        query : GET_CHANNEL_LIST
+    })
+    console.log("query Result : ",result)
+  
     useEffect(() => {
         subscribeToMore({
             document: SUBSCRIPTION_MESSAGE,
@@ -41,16 +43,13 @@ function Message() {
         })
     }, []);
 
-    const [sendMsg] = useMutation(CREATE_MESSAGE);
-
-    if (loading) return <div>loading..</div>
-
+    const [sendMsg] = useMutation(CREATE_MESSAGE)
     //받은 메시지는 왼쪽으로, 내가 보낸 메시지는 오른쪽으로 나타나야 한다.
 
     return (
         <div className="Chatting_container">
             <div className="Chatting_Header">
-                <button>서버 코드 가져오기</button>
+                
             </div>
             <div className="Show_Chatting">
                 {data ? data.getMessage.map((e, index) => {
@@ -67,7 +66,7 @@ function Message() {
                                     variables: {
                                         ...User,
                                         MessageContent: content,
-                                        ServerCode: ServerCode,
+                                        ServerCode: param.ServerCode,
                                         CreatedAt: date
                                     }
                                 })
@@ -85,7 +84,7 @@ function Message() {
                                 variables: {
                                     ...User,
                                     MessageContent: content,
-                                    ServerCode: ServerCode,
+                                    ServerCode : param.ServerCode,
                                     CreatedAt: date
                                 }
                             })

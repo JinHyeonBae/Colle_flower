@@ -8,6 +8,8 @@ import {
 import Home from './components/Home/Home';
 import Channel from './components/Channel/Channel';
 import Message from './components/Channel/Message/Message'
+import SignIn from './components/SignInPage/SignIn';
+import SignUp from './components/SignUpPage/SignUp.js'
 
 function App({ client }) {
   console.log("c :",client);
@@ -17,6 +19,8 @@ function App({ client }) {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/Chat/colleflower/:ServerCode" component={Channel}/>
+          <Route path="/signin" component={SignIn}/>
+          <Route path="/signup" component={SignUp}/>
         </Switch>
       </Router>
     </div>

@@ -1,5 +1,4 @@
 import React, { Fragment, useState } from 'react';
-import { useSelector } from "react-redux";
 import FindSchool from './FindSchool';
 import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -7,6 +6,9 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Modal from "@material-ui/core/Modal";
+
+import {useQuery, useMutation,useLazyQuery} from "@apollo/client";
+import {REGISTER_USER} from '../Query.js';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -112,11 +114,11 @@ function SignUp(props){
   };
 
   //set user school
-  let userSchoolName = useSelector(state => state.schoolName);
-  setUserInfo({
-    ...userInfo,
-    [schoolName]: userSchoolName
-  });
+  //let userSchoolName = useSelector(state => state.schoolName);
+  // setUserInfo({
+  //   ...userInfo,
+  //   [schoolName]: userSchoolName
+  // });
   
   //onChange Handler
   const onChangeHandler = (e) => {

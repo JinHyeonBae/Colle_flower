@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM, { render } from 'react-dom';
-import { GET_CHANNEL_LIST, GET_POST } from './Query.js';
-import { CREATE_CHANNEL } from './Mutation.js';
+import { GET_CHANNEL_LIST, GET_POST } from './query.js';
 import CreateChannel from './CreateChannel';
 import { useQuery, useMutation, useLazyQuery } from '@apollo/client';
 import { Link, useParams } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
 
-import {StudentNumber} from './Message/TemporaryUser'
+import { Popover, Typography, Button, Box } from '@material-ui/core';
+
+import { StudentNumber } from './Message/TemporaryUser'
 import Message from './Message/Message'
 import './Channel.scss'
 
@@ -17,8 +18,8 @@ import './Channel.scss'
 // 게시글은 바로 아래의 컴포넌트가 될 것이다. 
 
 function Channel() {
-    console.log(StudentNumber)
 
+    const [anchorEl, setAnchorEl] = useState(null);
     const client = useApolloClient();
     const param = useParams();
     const { loading, data, error } = useQuery(GET_CHANNEL_LIST, {
@@ -27,23 +28,33 @@ function Channel() {
 
     // console.log("client :", client);
 
-    // const result = client.readQuery({
-    //     query : GET_CHANNEL_LIST,
-    // })
-    // console.log("result :",result);
-
+    const result = client.readQuery({
+        query : GET_CHANNEL_LIST
+    })
+    console.log("result :",result);
+    console.log(param);
 
     if (loading) return <div>loading...</div>
     if (error) return <div>{error}</div>
     if (data) console.log(data);
+    
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
 
     return (
         <div className="Channel_frame">
             <div className="Channel_List">
                 <CreateChannel />
-                {data.Channel.map(({ ChannelTitle, ServerCode }) =>
+                <Button onClick={()=>alert(param.ServerCode)}>
+                    서버 코드 보기
+                </Button>
+                {data ? data.Channel.map(({ ChannelTitle, ServerCode }) =>
                     <Link to={`/Chat/colleflower/${ServerCode}`}>{ChannelTitle}</Link>
-                )} 
+                ) : ' '}
+                <div className="Chatting_EachOther">
+                    <Button>1대1채팅</Button>
+                </div>
             </div>
             <div className="Message_container">
                 <Message />
