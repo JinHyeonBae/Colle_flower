@@ -2,9 +2,8 @@ import { UserInputError } from 'apollo-server-express';
 import { introspectionFromSchema } from 'graphql';
 import { connection } from '../config/db.js';
 import { v4 as uuid } from 'uuid';
-import {PubSub} from 'apollo-server-express'
 import jwt from 'jsonwebtoken';
-import {JWT_SECRET} from '../api/jwt'
+import { JWT_SECRET } from '../api/jwt.js'
 const MSG_ADD = "MSGADD";
 // 채팅방을 만들었을 시 서버코드를 클라이언트에게 보내므로, GET 요청을 보낼 때는 반드시 서버 코드가 있음
 // 서버코드로 채널을 구별하므로 각자 서버코드에 맞는 채팅방을 보내야 함.  
@@ -15,23 +14,31 @@ const MSG_ADD = "MSGADD";
 const ChattingResolver = {
     Query: {
         Channel: async (_, { StuNumber }) => {
-            const [rows, field] = await connection.promise().query(`SELECT * from Chatting where StuNumber="${StuNumber}"`);
+            const [rows, field] = await connection.promise().query(`SELECT * from Chatting where StuNumber="1111"`);
+
             return rows;
         },
         getMessage: async (parent, { ServerCode }) => {
             const [rows, field] = await connection.promise().query(`SELECT * from Messages where ServerCode="${ServerCode}" ORDER BY CreatedAt`);
-            
-            console.log("row :",rows);
+
+            console.log("row :", rows);
             return rows;
         },
-        authenticate: async (_, {nickname, password})=>{
-            const found = await connection.promise().query(`SELECT * from user where NickName="${nickname}" && UserPassword="${password}"`);
-            console.log(found);
+        userLogin: async (_, { nickname, password }) => {
 
-            const token = jwt.sign({nickname}, JWT_SECRET, {expiresIn : 60*60});
-            console.log("token :", token);
+            const [rows] = await connection.promise().query(`SELECT * from user where NickName="${nickname}" && UserPassword="${password}"`);
+           
+            let AccessToken, RefreshToken;
+            
+            if (rows[0].NickName == undefined)
+                return new Error("정보가 틀렸습니다.")
+
+            AccessToken = jwt.sign({ nickname }, JWT_SECRET, { expiresIn: 60 * 60 });
+            console.log("token :", AccessToken);
+
             return {
-                token : token
+                AccessToken: AccessToken,
+                NickName : rows[0].NickName
             };
             //회원가입 후 로그인의 인증 방식이므로 회원가입에서 찾고난 후 토큰을 발급
         },
@@ -53,7 +60,7 @@ const ChattingResolver = {
             const msgId = uuid();
             console.log(typeof args.CreatedAt)
             const integerDate = parseInt(args.CreatedAt);
-            
+
             await connection.promise().query(`insert into Messages(MsgFrom,MsgTo,CreatedAt,MessageContent,MessageId,ServerCode) Values ("${args.MsgFrom}","${args.MsgTo}","${args.CreatedAt}","${args.MessageContent}","${msgId}","${args.ServerCode}")`);
 
             //이벤트와 데이터를 subscription Resolver로 전송하는 매커니즘

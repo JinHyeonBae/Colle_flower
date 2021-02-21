@@ -36,7 +36,8 @@ type CommentInfo{
 
 type User{
     username :String,
-    token : String!
+    AccessToken : String!
+    NickName : String
 }
 
 type Mutation{
@@ -47,7 +48,7 @@ type Mutation{
 type Query{
     Channel(StuNumber:String): [ChannelInfo],
     getMessage(ServerCode:String) : [Message],
-    authenticate(nickname:String, password :String) : User
+    userLogin(nickname:String, password :String) : User
 }
 
 type Subscription{

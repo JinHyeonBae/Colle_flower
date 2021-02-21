@@ -24,3 +24,5 @@ yarn-error.log*
 
 */debug.log
 */*.eslintcache
+server/api/jwt.js
+server/config/*

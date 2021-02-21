@@ -4,9 +4,10 @@ import { useQuery, useMutation, useLazyQuery, useSubscription, gql,useApolloClie
 import { GET_MESSAGE } from '../query';
 import { CREATE_MESSAGE, SUBSCRIPTION_MESSAGE } from '../Mutation'
 import { GET_CHANNEL_LIST  } from '../query.js';
-
+import {AUTH,GET_USERINFO} from '../../Query.js';
 import './Message.scss';
 import { User } from './TemporaryUser'
+
 
 function Message() {
 
@@ -24,11 +25,14 @@ function Message() {
     const { data, loading, subscribeToMore } = useQuery(GET_MESSAGE, {
         variables: param,
     });
-    const result = client.readQuery({
-        query : GET_CHANNEL_LIST
-    })
-    console.log("query Result : ",result)
-  
+    // const result = client.readQuery({
+    //     query : GET_USERINFO,
+    //     variables : localStorage.getItem('token')
+    // })
+
+    // console.log("query Result : ",result)
+    //캐쉬말고 쿠키에 nickname이랑 토큰 저장해서 불러오자
+
     useEffect(() => {
         subscribeToMore({
             document: SUBSCRIPTION_MESSAGE,

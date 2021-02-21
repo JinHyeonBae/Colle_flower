@@ -18,9 +18,18 @@ export const REGISTER_USER = gql`
 // }`;
 
 export const AUTH = gql`
-    query authenticate($nickname : String, $password : String){
-        authenticate(nickname:$nickname, password:$password){
-            token
+    query userLogin($nickname : String, $password : String){
+        userLogin(nickname:$nickname, password:$password){
+            AccessToken,
+            NickName
         }
     }
 `;
+
+export const GET_USERINFO = gql`
+    query userInfo($AccessToken : String){
+        userInfo(AccessToken:$AccessToken){
+            NickName
+        }
+    }
+`

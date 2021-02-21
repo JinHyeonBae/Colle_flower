@@ -16,10 +16,7 @@ import resolvers from './resolvers/ChattingResolver.js';
 import auth from './api/auth.js'
 import jwt from 'jsonwebtoken'
 
-const pubsub = new PubSub();
-
 const app = express();
-const __dirname = path.resolve();
 const PORT = 4000;
 
 app.use(logger('dev'));
@@ -47,11 +44,7 @@ const formatError = (err) => {
 const server = new ApolloServer({
     typeDefs : typeDefs,
     resolvers : resolvers,
-    context : (context)=>{
-        const ctx = auth(context);
-        console.log(ctx);
-        return {ctx, pubsub}
-    },
+    context : auth,
     playground : true,
     tracing: true,
     subscriptions : {

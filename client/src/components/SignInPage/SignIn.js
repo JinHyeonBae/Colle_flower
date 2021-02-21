@@ -1,5 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import {useQuery, useMutation,useLazyQuery} from "@apollo/client";
+import { useHistory } from "react-router-dom";
+
 import {AUTH} from '../Query.js'
 /* import { useDispatch } from "react-redux";
 
@@ -11,13 +13,15 @@ function SignIn(){
   /* const dispatch = useDispatch(); */
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
+  const history = useHistory();
 
   //여기서 토큰을 받고
   const [getUserInfo, {loading, data }] = useLazyQuery(AUTH,{
     onError : (err)=> console.log(err),
     onCompleted(data){
       console.log(data)
-      localStorage.setItem('token', data.authenticate.token);
+      localStorage.setItem('token', data.userLogin.AccessToken);
+      history.push('/')
     }
   })
 
