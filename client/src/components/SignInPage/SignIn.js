@@ -1,4 +1,8 @@
 import React, { Fragment, useState } from 'react';
+import {useQuery, useMutation,useLazyQuery} from "@apollo/client";
+import { useHistory } from "react-router-dom";
+
+import {AUTH} from '../Query.js'
 /* import { useDispatch } from "react-redux";
 
 const mapDispatchToProps = (dispatch) => ({
@@ -9,6 +13,17 @@ function SignIn(){
   /* const dispatch = useDispatch(); */
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
+  const history = useHistory();
+
+  //여기서 토큰을 받고
+  const [getUserInfo, {loading, data }] = useLazyQuery(AUTH,{
+    onError : (err)=> console.log(err),
+    onCompleted(data){
+      console.log(data)
+      localStorage.setItem('token', data.userLogin.AccessToken);
+      history.push('/')
+    }
+  })
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
@@ -27,13 +42,13 @@ function SignIn(){
     setUserPassword(e.target.value);
   }
 
+
   return (
     <Fragment>
       <div>
         <form onSubmit={onSubmitHandler}>
           <input 
-            type="email" 
-            placeholder="Email" 
+            type="input"  
             value={userEmail} 
             onChange={emailOnChangeHandler}
           />
@@ -43,7 +58,10 @@ function SignIn(){
             value={userPassword} 
             onChange={passwordOnChangeHandler}
           />
-          <button type="submit">Login</button>
+          <button type="submit" onClick={()=>getUserInfo({variables : {
+            nickname : userEmail,
+            password : userPassword
+          }})}>Login</button>
         </form>
       </div>
     </Fragment>

@@ -14,7 +14,16 @@ function Home(){
           Sign Up
         </Link>
       </button>
-
+      <button>
+        <Link to ="/Chat/colleflower/a">
+          Channel
+        </Link>
+      </button>
+      <button>
+        <Link to="/logout">
+          Logout
+        </Link>
+      </button>
    </Fragment>
   );
 }

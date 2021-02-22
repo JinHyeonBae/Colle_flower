@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { useDispatch } from "react-redux";
 
 export default function FindSchool(props){
   const schools = [
@@ -74,7 +73,7 @@ function SchoolLists(props){
 }
 
 function SchoolList(props) {
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   const onClickHandler = (name) => {
     console.log(name);
     //dispatch selectSchool - Not Working!!!!!!!!!!!!
