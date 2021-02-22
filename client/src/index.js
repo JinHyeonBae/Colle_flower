@@ -22,7 +22,11 @@ const httpLink = createHttpLink({
 const wsLink = new WebSocketLink({
   uri: "ws://localhost:4000/subscriptions",
   options: {
-    reconnect: true
+    reconnect: true,
+    connectionParams: {
+      // Pass any arguments you want for initialization
+      arguments : localStorage.getItem('token')
+    }
   }
 })
 
@@ -53,7 +57,6 @@ const authLink = setContext((_, { headers }) => {
     },
   }
 })
-//토큰이 있어서 다른 아이디를 쳐도 다 로그인이 된다.
 
 //uri를 http로 쓰니까 ws가 다 무시된건가? 옵션의 명을 잘 봐야겠다
 //apolloClient에서의 authorization은 뭐지? authLink를 만들어주는 것과 client에서 authrization 옵션은 뭐가 다른 걸까

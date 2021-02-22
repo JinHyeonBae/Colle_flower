@@ -25,12 +25,11 @@ function Message() {
     const { data, loading, subscribeToMore } = useQuery(GET_MESSAGE, {
         variables: param,
     });
-    // const result = client.readQuery({
-    //     query : GET_USERINFO,
-    //     variables : localStorage.getItem('token')
-    // })
+    const result = client.readQuery({
+        query : AUTH
+    })
 
-    // console.log("query Result : ",result)
+    console.log("query Result : ",result)
     //캐쉬말고 쿠키에 nickname이랑 토큰 저장해서 불러오자
 
     useEffect(() => {

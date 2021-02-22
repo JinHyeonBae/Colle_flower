@@ -14,12 +14,12 @@ const MSG_ADD = "MSGADD";
 const ChattingResolver = {
     Query: {
         Channel: async (_, { StuNumber }) => {
-            const [rows, field] = await connection.promise().query(`SELECT * from Chatting where StuNumber="1111"`);
+            const [rows, field] = await connection.promise().query(`SELECT * from Chatting where StuNumber="${StuNumber}"`);
 
             return rows;
         },
         getMessage: async (parent, { ServerCode }) => {
-            const [rows, field] = await connection.promise().query(`SELECT * from Messages where ServerCode="${ServerCode}" ORDER BY CreatedAt`);
+            const [rows, field] = await connection.promise().query(`SELECT * from messages where ServerCode="${ServerCode}" ORDER BY CreatedAt`);
 
             console.log("row :", rows);
             return rows;
@@ -27,11 +27,11 @@ const ChattingResolver = {
         userLogin: async (_, { nickname, password }) => {
 
             const [rows] = await connection.promise().query(`SELECT * from user where NickName="${nickname}" && UserPassword="${password}"`);
-           
+            console.log("nic :",rows[0]);
             let AccessToken, RefreshToken;
             
-            if (rows[0].NickName == undefined)
-                return new Error("정보가 틀렸습니다.")
+            if (rows[0] == undefined)
+                return new Error("로그인 정보가 틀렸습니다.")
 
             AccessToken = jwt.sign({ nickname }, JWT_SECRET, { expiresIn: 60 * 60 });
             console.log("token :", AccessToken);
@@ -58,11 +58,8 @@ const ChattingResolver = {
         },
         SendMessage: async (_, args, context) => {
             const msgId = uuid();
-            console.log(typeof args.CreatedAt)
-            const integerDate = parseInt(args.CreatedAt);
 
-            await connection.promise().query(`insert into Messages(MsgFrom,MsgTo,CreatedAt,MessageContent,MessageId,ServerCode) Values ("${args.MsgFrom}","${args.MsgTo}","${args.CreatedAt}","${args.MessageContent}","${msgId}","${args.ServerCode}")`);
-
+            await connection.promise().query(`insert into messages(MsgFrom,MsgTo,CreatedAt,MessageContent,MessageId,ServerCode) Values ("${args.MsgFrom}","${args.MsgTo}","${args.CreatedAt}","${args.MessageContent}","${msgId}","${args.ServerCode}")`);
             //이벤트와 데이터를 subscription Resolver로 전송하는 매커니즘
             context.pubsub.publish(MSG_ADD, { newChat: args })
 

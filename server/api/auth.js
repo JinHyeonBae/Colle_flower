@@ -7,12 +7,27 @@ import { AuthenticationError } from 'apollo-server';
 const pubsub = new PubSub();
 
 
-const verifyJWT = (context) => {
-    if(!context.req.headers.authorization)
+const verifyWebsocket = (params)=>{
+    if(!params)
+        new AuthenticationError("subscription failed");
+
+    const promise = new Promise((resolve, reject)=>{
+        const token = params.split('Bearer ')[1];
+        const decode = jwt.verify(token, JWT_SECRET);
+        resolve(token);
+    })
+    return promise;
+};
+
+const verifyJWT = async (context) => { //
+    
+    const auth = await context.req.headers.authorization;
+
+    if(!auth)
         return new Error("인증이 되지 않은 사용자입니다.");
 
-    if (context.req && context.req.headers.authorization) {
-        const token = context.req.headers.authorization.split('Bearer ')[1]
+    if (context.req && auth) {
+        const token = auth.split('Bearer ')[1]
         console.log("token", token)
         jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
             console.log("decode : ",decodedToken)
@@ -20,7 +35,6 @@ const verifyJWT = (context) => {
         })
     }
     console.log("user =", context.user);
-    //console.log("context :",context);
     return {context ,pubsub};
 }
 

@@ -19,6 +19,11 @@ function Home(){
           Channel
         </Link>
       </button>
+      <button>
+        <Link to="/logout">
+          Logout
+        </Link>
+      </button>
    </Fragment>
   );
 }
