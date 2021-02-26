@@ -6,9 +6,11 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Modal from "@material-ui/core/Modal";
+import Button from "@material-ui/core/Button";
 
-import {useQuery, useMutation,useLazyQuery} from "@apollo/client";
-import {REGISTER_USER} from '../Query.js';
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
+import { REGISTER_USER } from '../Query.js';
+import './SignUp.scss'
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -39,7 +41,7 @@ function getModalStyle() {
 }
 
 
-function SignUp(props){
+function SignUp(props) {
   const classes = useStyles();
 
   const [modalStyle] = useState(getModalStyle);
@@ -51,20 +53,20 @@ function SignUp(props){
     nickname: '',
     schoolName: '',
     studentID: '',
-    college: '',
+    major: '',
     department: '',
     education: '',
     grade: '',
   });
 
-  const { 
+  const {
     email,
-    password, 
+    password,
     passwordChecker,
-    nickname, 
+    nickname,
     schoolName,
-    studentID, 
-    college,
+    studentID,
+    major,
     department,
     education,
     grade,
@@ -73,7 +75,7 @@ function SignUp(props){
   const onSubmitHandler = (e) => {
     e.preventDefault();
     //check input values and existence in database
-    if (checkInputValue() && checkExistence()){
+    if (checkInputValue() && checkExistence()) {
       //pass the userInfo to server to save data in DB
 
       alert('Succeed to Sign Up');
@@ -95,7 +97,7 @@ function SignUp(props){
   }
 
   const checkExistence = () => {
-    
+
   }
 
   const checkEmailForm = () => {
@@ -103,7 +105,7 @@ function SignUp(props){
     return regExp.test(email) ? true : false;
   };
   const checkPassword = () => password === passwordChecker;
- 
+
 
   //for modal
   const modalOpenHandler = () => {
@@ -119,7 +121,7 @@ function SignUp(props){
   //   ...userInfo,
   //   [schoolName]: userSchoolName
   // });
-  
+
   //onChange Handler
   const onChangeHandler = (e) => {
     const { value, name } = e.target;
@@ -127,114 +129,100 @@ function SignUp(props){
       ...userInfo,
       [name]: value
     });
-  }; 
+  };
 
   return (
-    <Fragment>
       <div>
-        <form onSubmit={onSubmitHandler}>
-          <input required
-            name="email"
-            type="email" 
-            placeholder="Email" 
-            value={email} 
-            onChange={onChangeHandler} 
-          />
-          <input required
-            name="password"
-            type="password"
-            placeholder="Password" 
-            value={password} 
-            onChange={onChangeHandler} 
-          />
-          <input required
-            name="passwordChecker"
-            type="password"
-            placeholder="Password Checker" 
-            value={passwordChecker} 
-            onChange={onChangeHandler} 
-          />
-          <input 
-            name="nickname"
-            type="text" 
-            placeholder="Nickname" 
-            value={nickname} 
-            onChange={onChangeHandler} 
-          />
-          <input 
-            name="schoolName"
-            type="text"
-            placeholder="School Name" 
-            value={schoolName} 
-            onChange={onChangeHandler} 
-          />
-          <button type="button" onClick={modalOpenHandler}>Find School</button>
-          <input 
-            name="studentID"
-            type="text" 
-            placeholder="Student ID" 
-            value={studentID} 
-            onChange={onChangeHandler} 
-          />
-          <select 
-            name="college"
-            value={college} 
-            onChange={onChangeHandler}>
-            <option value="" disabled defaultValue hidden>College</option>
-            <option value="Engineering">Engineering</option>  {/*for test*/}
-          </select>
-          <select 
-            name="department"
-            value={department} 
-            onChange={onChangeHandler}>
-            <option value="" disabled defaultValue hidden>Department</option>
-            <option value="itcae">IT Conversions and Application Engineering</option>  {/*for test*/}
-          </select>
-          <select 
-            name="education"
-            value={education} 
-            onChange={onChangeHandler}>
-            <option value="" disabled defaultValue hidden>Education</option>
-            <option value="Attending">Attending</option>
-            <option value="Absence">A Leave of absence</option>
-            <option value="Graduated">Graduated</option>
-          </select>
-          <FormControl className={classes.formControl}>
-            <Select
-              value={education}
+        <div className="SignUp-container">
+          <form onSubmit={onSubmitHandler}>
+            <input required
+              name="email"
+              type="email"
+              placeholder="Email"
+              value={email}
               onChange={onChangeHandler}
-              displayEmpty
-              className={classes.selectEmpty}
-              inputProps={{ 'aria-label': 'Without label' }}
-            >
-              <MenuItem value="" disabled>Education</MenuItem>
-              <MenuItem value="attending">Attending</MenuItem>
-              <MenuItem value="absence">A Leave of absence</MenuItem>
-              <MenuItem value="graduated">Graduated</MenuItem>
-            </Select>
-            <FormHelperText>Placeholder</FormHelperText>
-          </FormControl>
-          <input 
-            name="grade"
-            type="number" 
-            placeholder="Grade" 
-            value={grade} 
-            onChange={onChangeHandler} 
-          />
-          <button type="submit">Sign Up</button>
-        </form>
+            />
+            <input required
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={onChangeHandler}
+            />
+            <input required
+              name="passwordChecker"
+              type="password"
+              placeholder="Password Checker"
+              value={passwordChecker}
+              onChange={onChangeHandler}
+            />
+            <input
+              name="nickname"
+              type="text"
+              placeholder="Nickname"
+              value={nickname}
+              onChange={onChangeHandler}
+            />
+            <input
+              name="schoolName"
+              type="text"
+              placeholder="School Name"
+              value={schoolName}
+              onChange={onChangeHandler}
+            />
+            <button type="button" onClick={modalOpenHandler}>Find School</button>
+            <input
+              name="studentID"
+              type="text"
+              placeholder="Student ID"
+              value={studentID}
+              onChange={onChangeHandler}
+            />
+            <select
+              name="major"
+              value={major}
+              onChange={onChangeHandler}>
+              <option value="" disabled defaultValue hidden>major</option>
+              <option value="Engineering">Engineering</option>  {/*for test*/}
+            </select>
+            <select
+              name="department"
+              value={department}
+              onChange={onChangeHandler}>
+              <option value="" disabled defaultValue hidden>Department</option>
+              <option value="itcae">IT Conversions and Application Engineering</option>  {/*for test*/}
+            </select>
+            <select
+              name="education"
+              value={education}
+              onChange={onChangeHandler}>
+              <option value="" disabled defaultValue hidden>Education</option>
+              <option value="Attending">Attending</option>
+              <option value="Absence">A Leave of absence</option>
+              <option value="Graduated">Graduated</option>
+            </select>
+           
+            <input
+              name="grade"
+              type="number"
+              placeholder="Grade"
+              value={grade}
+              onChange={onChangeHandler}
+            />
+            <Button type="submit">Sign Up</Button>
+          </form>
+        </div>
+        <Modal
+          open={modalOpen}
+          onClose={modalCloseHandler}
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+        >
+          <div style={modalStyle} className={classes.paper}>
+            <FindSchool onClose={modalCloseHandler} />
+          </div>
+        </Modal>
       </div>
-      <Modal
-        open={modalOpen}
-        onClose={modalCloseHandler}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-      >
-      <div style={modalStyle} className={classes.paper}>
-        <FindSchool onClose={modalCloseHandler}/>
-      </div>
-      </Modal>
-    </Fragment>
   );
 }
 

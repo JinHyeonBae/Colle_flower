@@ -52,7 +52,7 @@ function Channel() {
                 {data ? data.Channel.map(({ ChannelTitle, ServerCode }) =>
                     <Link to={`/Chat/colleflower/${ServerCode}`}>{ChannelTitle}</Link>
                 ) : ' '}
-                <div className="Chatting_EachOther">
+                <div className="Chatting_Eachother">
                     <Button>1대1채팅</Button>
                 </div>
             </div>
