@@ -1,4 +1,4 @@
-import { UserInputError } from 'apollo-server-express';
+import { PubSub, UserInputError } from 'apollo-server-express';
 import { introspectionFromSchema } from 'graphql';
 import { connection } from '../config/db.js';
 import { v4 as uuid } from 'uuid';
@@ -13,23 +13,21 @@ const MSG_ADD = "MSGADD";
 
 const ChattingResolver = {
     Query: {
-        Channel: async (_, { StuNumber }) => {
+        Channel: async (_, { StuNumber, user }) => {
             const [rows, field] = await connection.promise().query(`SELECT * from Chatting where StuNumber="${StuNumber}"`);
-
+            console.log(user);
             return rows;
         },
         getMessage: async (parent, { ServerCode }) => {
             const [rows, field] = await connection.promise().query(`SELECT * from messages where ServerCode="${ServerCode}" ORDER BY CreatedAt`);
 
-            console.log("row :", rows);
             return rows;
         },
         userLogin: async (_, { nickname, password }) => {
 
             const [rows] = await connection.promise().query(`SELECT * from user where NickName="${nickname}" && UserPassword="${password}"`);
-            console.log("nic :",rows[0]);
             let AccessToken, RefreshToken;
-            
+
             if (rows[0] == undefined)
                 return new Error("로그인 정보가 틀렸습니다.")
 
@@ -38,7 +36,7 @@ const ChattingResolver = {
 
             return {
                 AccessToken: AccessToken,
-                NickName : rows[0].NickName
+                NickName: rows[0].NickName
             };
             //회원가입 후 로그인의 인증 방식이므로 회원가입에서 찾고난 후 토큰을 발급
         },
@@ -56,20 +54,24 @@ const ChattingResolver = {
             await connection.promise().query(`insert into Chatting(HostMember,ChannelTitle,TeamMember,ServerCode,StuNumber) Values ("${HostMember}","${ChannelTitle}","${TeamMember}", "${ServerCode}", "${StuNumber}")`);
             return 1;
         },
-        SendMessage: async (_, args, context) => {
+        SendMessage: async (_, args, { pubsub, user }) => {
             const msgId = uuid();
+            console.log("there is SendMessage Resolver")
 
             await connection.promise().query(`insert into messages(MsgFrom,MsgTo,CreatedAt,MessageContent,MessageId,ServerCode) Values ("${args.MsgFrom}","${args.MsgTo}","${args.CreatedAt}","${args.MessageContent}","${msgId}","${args.ServerCode}")`);
             //이벤트와 데이터를 subscription Resolver로 전송하는 매커니즘
-            context.pubsub.publish(MSG_ADD, { newChat: args })
+            console.log("user :", user);
+            console.log("pubsub :",pubsub);
 
+            await pubsub.publish(MSG_ADD, { newChat : args })
+            console.log("arg :", args);
             return args
         }
     },
     Subscription: {
         newChat: {
             // Manipulate and return the new value => resolve
-            subscribe: (_, __, { pubsub }) => pubsub.asyncIterator(MSG_ADD)
+            subscribe: (_, args, { pubsub }) => pubsub.asyncIterator(MSG_ADD)
         }
     }
 }

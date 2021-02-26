@@ -10,16 +10,17 @@ import cors from 'cors';
 import http from 'http';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { PubSub } from 'graphql-subscriptions';
+import jwt from 'jsonwebtoken'
 
 import typeDefs from './typeDefs/typeDefs.js';
 import resolvers from './resolvers/ChattingResolver.js';
-import auth from './api/auth.js'
-import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from './api/jwt.js'
 import { connection } from './config/db.js';
+import { verifyWebsocket, verifyJWT } from './api/auth.js';
 
 const app = express();
 const PORT = 4000;
+
 const pubsub = new PubSub();
 
 app.use(logger('dev'));
@@ -47,14 +48,33 @@ const formatError = (err) => {
 const server = new ApolloServer({
     typeDefs: typeDefs,
     resolvers: resolvers,
-    context: auth,
+    context: async ({ connection, req }) => {
+        let user, conContext;
+        
+        //subscription의 경우 conneciton 개체에서 metadata 추출
+        if (connection)
+            conContext = connection.context
+        //query, mutation은 req에서 추출
+        //sendMessage는 mutation이니까 connection에서 pubsub를 돌려주면 안되는구나
+        else 
+            user = await verifyJWT(req)
+        return {user,req, conContext, pubsub}    
+    },
     playground: true,
     tracing: true,
     subscriptions: {
-        path: '/subscriptions',
+        path: '/graphql',
         keepAlive: 1,
         onConnect: (connectionParams, webSocket, context) => {
-            console.log("params:",connectionParams.arguments)
+            console.log("Subscription Connect!")
+            if (connectionParams.authorization) {
+                verifyWebsocket(connectionParams.authorization)
+                    .then(user => {
+                        return {
+                            user: user
+                        }
+                    })
+            }
         },
         onDisconnect: (WebSocket, context) => {
             console.log("Subscription disconnect!")

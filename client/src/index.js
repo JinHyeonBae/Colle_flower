@@ -15,20 +15,36 @@ import {setContext} from  '@apollo/client/link/context';
 
 //연동할 graphql 서버의 uri를 설정해야해야 함.
 
-const httpLink = createHttpLink({
+let httpLink = createHttpLink({
   uri: "http://localhost:4000/graphql"
 });
 
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = localStorage.getItem('token')
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  }
+})
+
+httpLink = authLink.concat(httpLink);
+
+//terminating link. it sends data to server and accepts returning data
 const wsLink = new WebSocketLink({
-  uri: "ws://localhost:4000/subscriptions",
+  uri: "ws://localhost:4000/graphql",
   options: {
     reconnect: true,
     connectionParams: {
       // Pass any arguments you want for initialization
-      arguments : localStorage.getItem('token')
+      authorization: `Bearer ${localStorage.getItem('token')}`
     }
   }
 })
+
 
 const splitLink = split(
   ({ query }) => {
@@ -46,22 +62,12 @@ splitLink.setOnError((err) =>{
   console.log("e:", err)
 })
 
-const authLink = setContext((_, { headers }) => {
-  // get the authentication token from local storage if it exists
-  const token = localStorage.getItem('token')
-  // return the headers to the context so httpLink can read them
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : '',
-    },
-  }
-})
+
 
 //uri를 http로 쓰니까 ws가 다 무시된건가? 옵션의 명을 잘 봐야겠다
 //apolloClient에서의 authorization은 뭐지? authLink를 만들어주는 것과 client에서 authrization 옵션은 뭐가 다른 걸까
 const client = new ApolloClient({
-  link : authLink.concat(splitLink),
+  link : splitLink,
   cache: new InMemoryCache({
     typePolicies:{
       Channel : {
